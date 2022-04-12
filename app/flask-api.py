@@ -15,8 +15,8 @@ description =   """
                 <title>API Landing</title>
                 </head>
                 <body>
-                    <h3>A simple API using Flask</h3>
-                    <a href="http://localhost:5000/api?value=2">sample request</a>
+                    <h3>A simple API to verify IBAN numbers</h3>
+                    <a href="http://localhost:5000/iban?input=BE71096123456769">sample request</a>
                 </body>
                 """
 
@@ -27,27 +27,18 @@ def hello_world():
     # return a html format string that is rendered in the browser
 	return description
 
-# our '/api' url
-# requires user integer argument: value
-# returns error message if wrong arguments are passed.
-@app.route('/api', methods=['GET'])
-def square():
-    if not all(k in request.args for k in (["value"])):
-        # we can also print dynamically
-        # using python f strings and with
-        # html elements such as line breaks (<br>)
-        error_message =     f"\
-                            Required paremeters : 'value'<br>\
-                            Supplied paremeters : {[k for k in request.args]}\
-                            "
-        return error_message
-    else:
-        # assign and cast variable to int
-        value = int(request.args['value'])
-        # or use the built in get method and assign a type
-        # http://werkzeug.palletsprojects.com/en/0.15.x/datastructures/#werkzeug.datastructures.MultiDict.get
-        value = request.args.get('value', type=int)
-        return json.dumps({"Value Squared" : value**2})
+# our '/iban' url
+# Sample: http://localhost:5000/iban?input=SK0809000000000123123123
+@app.route('/iban', methods=['GET'])
+def check_iban():
+    countries = ["SK", "SE", "CH", "ES", "BE", "BR", "FR", "IE", "DE", "GR", "MU", "PK", "PL", "RO", "LC", "SA", "GB"]
+    inp = request.args['input']
+    if inp[:2] in countries:
+        if inp[2:4].isdigit():
+            return json.dumps({"IBAN" : "Correct"})
+
+
+    return json.dumps({"IBAN" : "False"})
 
 if __name__ == "__main__":
 	# for debugging locally
