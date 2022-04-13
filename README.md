@@ -3,6 +3,7 @@
 
 # Build Image
 $ cd flask-api
+#
 $ docker build -t prod/flask-api:0.0 .
 
 
